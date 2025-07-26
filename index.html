@@ -1,405 +1,410 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner</title>
+    <title>اسکنر و تولیدکننده QR کد</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
-        #interactive {
-            width: 100%;
-            position: relative;
+        @font-face {
+            font-family: 'Vazir';
+            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot');
+            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot?#iefix') format('embedded-opentype'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff2') format('woff2'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff') format('woff'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
         }
-        
-        #interactive.viewport {
-            position: relative;
-            height: 100%;
+        body {
+            font-family: 'Vazir', sans-serif;
         }
-        
-        #interactive.viewport > canvas, #interactive.viewport > video {
-            max-width: 100%;
-            width: 100%;
-            height: auto;
-        }
-        
-        canvas.drawing, canvas.drawingBuffer {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-        
-        .history-card {
-            transition: all 0.3s ease;
-        }
-        
-        .history-card:hover {
-            transform: translateY(-5px);
-        }
-        
         #scanner-container {
-            transition: all 0.3s ease;
+            position: relative;
+        }
+        #scan-region {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            border: 3px dashed #333;
+            border-radius: 8px;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900">
-    <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-black text-white p-4 shadow-md">
-            <div class="container mx-auto flex justify-between items-center">
-                <h1 class="text-xl font-bold">📦 Barcode Scanner</h1>
-                <div class="flex space-x-4">
-                    <button id="toggleHistoryBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded transition">
-                        History
-                    </button>
-                    <button id="toggleGenerateBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded transition">
-                        Generate
-                    </button>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+    <header class="bg-white shadow-md py-4 px-6">
+        <h1 class="text-xl font-bold text-center">اسکنر و تولیدکننده QR کد</h1>
+    </header>
+    
+    <main class="flex-1 container mx-auto px-4 py-6">
+        <div class="flex justify-center mb-4">
+            <button id="scanner-tab" class="px-4 py-2 bg-black text-white rounded-r-lg focus:outline-none">اسکنر</button>
+            <button id="generator-tab" class="px-4 py-2 bg-white text-black border border-gray-300 rounded-l-lg focus:outline-none">تولیدکننده</button>
+            <button id="history-tab" class="px-4 py-2 bg-white text-black border border-gray-300 mr-2 focus:outline-none">تاریخچه</button>
+        </div>
+        
+        <!-- Scanner Section -->
+        <div id="scanner-section" class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-lg font-semibold mb-4">اسکن QR کد</h2>
+            <p class="text-gray-600 mb-4">لطفا دسترسی به دوربین را تایید کنید تا اسکنر فعال شود.</p>
+            
+            <div id="scanner-container" class="relative h-64 w-full bg-gray-200 rounded-lg overflow-hidden">
+                <video id="camera-feed" class="h-full w-full object-cover" playsinline></video>
+                <div id="scan-region" class="hidden"></div>
+                <div id="scanner-message" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
+                    <p id="permission-message" class="mb-4 text-center">در انتظار مجوز دسترسی به دوربین...</p>
+                    <button id="grant-access-btn" class="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition">اعطای دسترسی</button>
                 </div>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="flex-grow container mx-auto p-4">
-            <!-- Scanner Section -->
-            <div id="scanner-container" class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                <div id="permission-section" class="text-center py-12">
-                    <h2 class="text-2xl font-bold mb-4">Enable Camera Access</h2>
-                    <p class="mb-6 text-gray-700">We need your permission to access your camera to scan barcodes.</p>
-                    <button id="requestPermissionBtn" class="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition">
-                        Allow Camera Access
-                    </button>
-                </div>
-
-                <div id="scanner-section" class="hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Scan Barcode</h2>
-                        <button id="toggleCameraBtn" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded transition">
-                            Switch Camera
-                        </button>
-                    </div>
-                    <div id="interactive" class="viewport bg-black rounded-lg overflow-hidden mb-4" style="height: 300px;"></div>
-                    <div class="text-center">
-                        <p id="scanStatus" class="text-gray-600">Place barcode within the viewfinder</p>
-                    </div>
+            
+            <div id="scanned-result" class="mt-4 hidden">
+                <p class="font-medium">نتیجه اسکن:</p>
+                <div class="flex items-center mt-2">
+                    <a id="result-link" href="#" target="_blank" class="text-blue-600 hover:underline truncate">مثال.ir</a>
+                    <button id="copy-result-btn" class="mr-2 px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition">کپی</button>
                 </div>
             </div>
-
-            <!-- Generate Section -->
-            <div id="generate-container" class="bg-white rounded-lg shadow-lg p-6 mb-8 hidden">
-                <h2 class="text-2xl font-bold mb-4">Generate Barcode</h2>
-                <div class="mb-4">
-                    <label for="barcodeText" class="block text-gray-700 mb-2">Enter text or URL:</label>
-                    <input type="text" id="barcodeText" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
-                </div>
-                <div class="mb-4">
-                    <label for="barcodeType" class="block text-gray-700 mb-2">Barcode type:</label>
-                    <select id="barcodeType" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
-                        <option value="CODE128">CODE128</option>
-                        <option value="EAN13">EAN-13</option>
-                        <option value="UPC">UPC</option>
-                        <option value="CODE39">CODE39</option>
-                        <option value="ITF14">ITF-14</option>
-                    </select>
-                </div>
-                <button id="generateBarcodeBtn" class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition">
-                    Generate Barcode
-                </button>
-                <div class="mt-6 flex justify-center">
-                    <svg id="barcode" class="border p-2 rounded"></svg>
-                </div>
-                <div id="download-section" class="mt-4 hidden">
-                    <button id="downloadBarcodeBtn" class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition">
-                        Download Barcode
-                    </button>
-                </div>
+            
+            <button id="start-scan-btn" class="w-full mt-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition hidden">شروع اسکن</button>
+        </div>
+        
+        <!-- Generator Section -->
+        <div id="generator-section" class="bg-white rounded-lg shadow p-4 hidden">
+            <h2 class="text-lg font-semibold mb-4">تولید QR کد</h2>
+            <p class="text-gray-600 mb-4">متن یا لینک مورد نظر خود را وارد کنید تا QR کد تولید شود.</p>
+            
+            <div class="mb-4">
+                <label for="qr-content" class="block mb-1">محتوا:</label>
+                <input type="text" id="qr-content" placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
             </div>
-
-            <!-- History Section -->
-            <div id="history-container" class="bg-white rounded-lg shadow-lg p-6 hidden">
-                <h2 class="text-2xl font-bold mb-4">Scan History</h2>
-                <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="text-center py-8">
-                        <p class="text-gray-500">No scan history yet</p>
-                    </div>
-                </div>
+            
+            <div class="mb-4">
+                <label for="qr-size" class="block mb-1">اندازه (پیکسل):</label>
+                <select id="qr-size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                    <option value="100">100</option>
+                    <option value="200" selected>200</option>
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                </select>
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-black text-white p-4 text-center">
-            <p>© 2023 Barcode Scanner. All rights reserved.</p>
-        </footer>
-    </div>
+            
+            <button id="generate-btn" class="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition">تولید QR کد</button>
+            
+            <div id="qr-result-container" class="mt-6 flex flex-col items-center hidden">
+                <div id="qr-code" class="p-4 bg-white rounded-lg shadow"></div>
+                <button id="download-btn" class="mt-4 px-4 py-2 bg-white text-black border border-gray-300 rounded-lg hover:bg-gray-100 transition">دانلود QR کد</button>
+            </div>
+        </div>
+        
+        <!-- History Section -->
+        <div id="history-section" class="bg-white rounded-lg shadow p-4 hidden">
+            <h2 class="text-lg font-semibold mb-4">تاریخچه اسکن‌ها</h2>
+            <p class="text-gray-600 mb-4">QR کدهای اسکن شده اخیر</p>
+            
+            <div id="history-list" class="space-y-2">
+                <p id="empty-history-message" class="text-center py-8 text-gray-500">هیچ تاریخچه‌ای موجود نیست</p>
+                <!-- History items will be added here -->
+            </div>
+        </div>
+    </main>
+    
+    <footer class="bg-white py-4 px-6 text-center text-sm text-gray-600 border-t">
+        <p>تمامی حقوق محفوظ است © 2023 | اسکنر QR کد</p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const permissionSection = document.getElementById('permission-section');
+            // Tab switching
+            const scannerTab = document.getElementById('scanner-tab');
+            const generatorTab = document.getElementById('generator-tab');
+            const historyTab = document.getElementById('history-tab');
+            
             const scannerSection = document.getElementById('scanner-section');
-            const requestPermissionBtn = document.getElementById('requestPermissionBtn');
-            const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
-            const toggleGenerateBtn = document.getElementById('toggleGenerateBtn');
-            const scannerContainer = document.getElementById('scanner-container');
-            const generateContainer = document.getElementById('generate-container');
-            const historyContainer = document.getElementById('history-container');
-            const toggleCameraBtn = document.getElementById('toggleCameraBtn');
-            const scanStatus = document.getElementById('scanStatus');
-            const generateBarcodeBtn = document.getElementById('generateBarcodeBtn');
-            const barcodeText = document.getElementById('barcodeText');
-            const barcodeType = document.getElementById('barcodeType');
-            const barcodeElement = document.getElementById('barcode');
-            const downloadSection = document.getElementById('download-section');
-            const downloadBarcodeBtn = document.getElementById('downloadBarcodeBtn');
-            const historyList = document.getElementById('history-list');
-
-            // State variables
-            let currentStream = null;
-            let facingMode = "environment"; // default: rear camera
-            let scanHistory = JSON.parse(localStorage.getItem('scanHistory')) || [];
-
-            // Initialize the app
-            initApp();
-
-            // Event Listeners
-            requestPermissionBtn.addEventListener('click', initScanner);
-            toggleHistoryBtn.addEventListener('click', toggleHistory);
-            toggleGenerateBtn.addEventListener('click', toggleGenerate);
-            toggleCameraBtn.addEventListener('click', toggleCamera);
-            generateBarcodeBtn.addEventListener('click', generateBarcode);
-            downloadBarcodeBtn.addEventListener('click', downloadBarcode);
-
-            // Functions
-            function initApp() {
-                updateHistoryList();
-            }
-
-            function toggleHistory() {
-                const isHistoryVisible = !historyContainer.classList.contains('hidden');
+            const generatorSection = document.getElementById('generator-section');
+            const historySection = document.getElementById('history-section');
+            
+            function resetTabs() {
+                scannerTab.classList.remove('bg-black', 'text-white');
+                scannerTab.classList.add('bg-white', 'text-black');
+                generatorTab.classList.remove('bg-black', 'text-white');
+                generatorTab.classList.add('bg-white', 'text-black');
+                historyTab.classList.remove('bg-black', 'text-white');
+                historyTab.classList.add('bg-white', 'text-black');
                 
-                scannerContainer.classList.toggle('hidden', !isHistoryVisible);
-                generateContainer.classList.add('hidden');
-                historyContainer.classList.toggle('hidden', isHistoryVisible);
-                
-                toggleHistoryBtn.classList.toggle('bg-white', !isHistoryVisible);
-                toggleHistoryBtn.classList.toggle('text-black', !isHistoryVisible);
-                toggleGenerateBtn.classList.remove('bg-white', 'text-black');
+                scannerSection.classList.add('hidden');
+                generatorSection.classList.add('hidden');
+                historySection.classList.add('hidden');
             }
-
-            function toggleGenerate() {
-                const isGenerateVisible = !generateContainer.classList.contains('hidden');
-                
-                scannerContainer.classList.toggle('hidden', !isGenerateVisible);
-                generateContainer.classList.toggle('hidden', isGenerateVisible);
-                historyContainer.classList.add('hidden');
-                
-                toggleGenerateBtn.classList.toggle('bg-white', !isGenerateVisible);
-                toggleGenerateBtn.classList.toggle('text-black', !isGenerateVisible);
-                toggleHistoryBtn.classList.remove('bg-white', 'text-black');
+            
+            function activateTab(tab, section) {
+                resetTabs();
+                tab.classList.add('bg-black', 'text-white');
+                tab.classList.remove('bg-white', 'text-black');
+                section.classList.remove('hidden');
             }
-
-            async function initScanner() {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { 
-                            facingMode: facingMode,
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        },
-                        audio: false
-                    });
-
-                    currentStream = stream;
-                    permissionSection.classList.add('hidden');
-                    scannerSection.classList.remove('hidden');
-                    setUpScanner();
-                } catch (err) {
-                    console.error("Error accessing camera:", err);
-                    scanStatus.textContent = "Error accessing camera. Please check permissions.";
-                }
+            
+            scannerTab.addEventListener('click', () => activateTab(scannerTab, scannerSection));
+            generatorTab.addEventListener('click', () => activateTab(generatorTab, generatorSection));
+            historyTab.addEventListener('click', () => {
+                activateTab(historyTab, historySection);
+                loadHistory();
+            });
+            
+            // Scanner functionality
+            const cameraFeed = document.getElementById('camera-feed');
+            const scanRegion = document.getElementById('scan-region');
+            const scannerMessage = document.getElementById('scanner-message');
+            const permissionMessage = document.getElementById('permission-message');
+            const grantAccessBtn = document.getElementById('grant-access-btn');
+            const startScanBtn = document.getElementById('start-scan-btn');
+            const scannedResult = document.getElementById('scanned-result');
+            const resultLink = document.getElementById('result-link');
+            const copyResultBtn = document.getElementById('copy-result-btn');
+            
+            let stream = null;
+            let scanning = false;
+            let animationFrame = null;
+            
+            grantAccessBtn.addEventListener('click', requestCameraAccess);
+            startScanBtn.addEventListener('click', toggleScanning);
+            copyResultBtn.addEventListener('click', copyScanResult);
+            
+            // Check if camera access was previously granted
+            if (localStorage.getItem('cameraAccessGranted') === 'true') {
+                requestCameraAccess();
             }
-
-            function setUpScanner() {
-                Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: document.querySelector('#interactive'),
-                        constraints: {
-                            width: 480,
-                            height: 320,
-                            facingMode: facingMode
-                        },
+            
+            function requestCameraAccess() {
+                permissionMessage.textContent = 'در حال فعال‌سازی دوربین...';
+                grantAccessBtn.classList.add('hidden');
+                
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
                     },
-                    decoder: {
-                        readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", 
-                                 "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
-                    },
-                    locator: {
-                        halfSample: true,
-                        patchSize: "medium",
-                    },
-                    locate: true,
-                }, function(err) {
-                    if (err) {
-                        console.error(err);
-                        scanStatus.textContent = "Failed to initialize scanner. Please try again.";
-                        return;
-                    }
-                    scanStatus.textContent = "Place barcode within the viewfinder";
-                    Quagga.start();
-                });
-
-                Quagga.onDetected(async function(result) {
-                    const code = result.codeResult.code;
-                    scanStatus.textContent = `Detected: ${code}`;
-                    
-                    // Stop scanning temporarily
-                    Quagga.stop();
-                    
-                    // Add to history
-                    addToHistory(code);
-                    
-                    // Check if the code is a URL and navigate to it
-                    try {
-                        let url = code;
-                        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                            url = 'http://' + url;
-                        }
-                        
-                        // Show confirmation before redirecting
-                        const shouldRedirect = confirm(`Do you want to navigate to:\n${url}`);
-                        if (shouldRedirect) {
-                            window.location.href = url;
-                        } else {
-                            // Resume scanning
-                            Quagga.start();
-                        }
-                    } catch (e) {
-                        console.error("Error navigating to URL:", e);
-                        alert(`Barcode detected: ${code}`);
-                        // Resume scanning
-                        Quagga.start();
-                    }
+                    audio: false
+                }).then(function(s) {
+                    stream = s;
+                    cameraFeed.srcObject = stream;
+                    scannerMessage.classList.add('hidden');
+                    startScanBtn.classList.remove('hidden');
+                    scanRegion.classList.remove('hidden');
+                    localStorage.setItem('cameraAccessGranted', 'true');
+                }).catch(function(err) {
+                    console.error("Camera access error:", err);
+                    permissionMessage.textContent = 'خطا در دسترسی به دوربین. لطفا مجدداً تلاش کنید.';
+                    grantAccessBtn.classList.remove('hidden');
+                    localStorage.setItem('cameraAccessGranted', 'false');
                 });
             }
-
-            function addToHistory(code) {
-                const timestamp = new Date().toISOString();
-                const scanItem = { code, timestamp };
-                
-                // Add to beginning of array (newest first)
-                scanHistory.unshift(scanItem);
-                
-                // Keep only recent 50 scans
-                if (scanHistory.length > 50) {
-                    scanHistory.pop();
+            
+            function toggleScanning() {
+                if (scanning) {
+                    stopScanning();
+                    startScanBtn.textContent = 'شروع اسکن';
+                } else {
+                    startScanning();
+                    startScanBtn.textContent = 'توقف اسکن';
                 }
-                
-                // Save to localStorage
-                localStorage.setItem('scanHistory', JSON.stringify(scanHistory));
-                
-                // Update the history list
-                updateHistoryList();
             }
-
-            function updateHistoryList() {
-                if (scanHistory.length === 0) {
-                    historyList.innerHTML = `
-                        <div class="text-center py-8">
-                            <p class="text-gray-500">No scan history yet</p>
-                        </div>
-                    `;
-                    return;
+            
+            function startScanning() {
+                scanning = true;
+                scannedResult.classList.add('hidden');
+                scanQRCode();
+            }
+            
+            function stopScanning() {
+                scanning = false;
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                    animationFrame = null;
                 }
-                
-                historyList.innerHTML = scanHistory.map(item => `
-                    <div class="history-card bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${item.code}</span>
-                            <span class="text-xs text-gray-500">${formatDate(item.timestamp)}</span>
-                        </div>
-                        <button onclick="handleHistoryAction('${item.code}')" class="bg-black text-white text-xs px-3 py-1 rounded hover:bg-gray-800 transition">
-                            Copy
-                        </button>
-                    </div>
-                `).join('');
             }
-
-            function formatDate(isoString) {
-                const date = new Date(isoString);
-                return date.toLocaleString();
-            }
-
-            async function toggleCamera() {
-                if (!currentStream) return;
+            
+            function scanQRCode() {
+                if (!scanning) return;
                 
-                // Stop current stream
-                currentStream.getTracks().forEach(track => track.stop());
+                const canvasElement = document.createElement('canvas');
+                const canvas = canvasElement.getContext('2d');
                 
-                // Toggle facing mode
-                facingMode = facingMode === "user" ? "environment" : "user";
-                
-                // Reinitialize scanner with new camera
-                await initScanner();
-            }
-
-            function generateBarcode() {
-                const text = barcodeText.value.trim();
-                const type = barcodeType.value;
-                
-                if (!text) {
-                    alert("Please enter text or URL to generate barcode");
-                    return;
-                }
-                
-                try {
-                    JsBarcode(barcodeElement, text, {
-                        format: type,
-                        lineColor: "#000000",
-                        width: 2,
-                        height: 80,
-                        displayValue: true,
-                        font: "monospace",
-                        fontSize: 16
+                if (cameraFeed.readyState === cameraFeed.HAVE_ENOUGH_DATA) {
+                    canvasElement.height = cameraFeed.videoHeight;
+                    canvasElement.width = cameraFeed.videoWidth;
+                    canvas.drawImage(cameraFeed, 0, 0, canvasElement.width, canvasElement.height);
+                    
+                    const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
                     });
                     
-                    downloadSection.classList.remove('hidden');
+                    if (code) {
+                        handleScannedCode(code.data);
+                    }
+                }
+                
+                animationFrame = requestAnimationFrame(scanQRCode);
+            }
+            
+            function handleScannedCode(data) {
+                stopScanning();
+                scannedResult.classList.remove('hidden');
+                
+                // Check if data is a URL
+                try {
+                    const url = new URL(data);
+                    resultLink.href = url.href;
+                    resultLink.textContent = url.hostname;
                 } catch (e) {
-                    alert("Error generating barcode: " + e.message);
+                    resultLink.href = '#';
+                    resultLink.textContent = data.length > 20 ? data.substring(0, 20) + '...' : data;
                 }
+                
+                // Add to history
+                addToHistory(data);
             }
-
-            function downloadBarcode() {
-                const canvas = document.querySelector("#barcode canvas");
+            
+            function copyScanResult() {
+                const text = resultLink.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = copyResultBtn.textContent;
+                    copyResultBtn.textContent = 'کپی شد!';
+                    setTimeout(() => {
+                        copyResultBtn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+            
+            // Generator functionality
+            const qrContent = document.getElementById('qr-content');
+            const qrSize = document.getElementById('qr-size');
+            const generateBtn = document.getElementById('generate-btn');
+            const qrResultContainer = document.getElementById('qr-result-container');
+            const qrCodeElement = document.getElementById('qr-code');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            generateBtn.addEventListener('click', generateQRCode);
+            downloadBtn.addEventListener('click', downloadQRCode);
+            
+            function generateQRCode() {
+                const content = qrContent.value.trim();
+                const size = parseInt(qrSize.value);
+                
+                if (!content) {
+                    alert('لطفا محتوایی برای تولید QR کد وارد کنید');
+                    return;
+                }
+                
+                qrCodeElement.innerHTML = '';
+                QRCode.toCanvas(qrCodeElement, content, {
+                    width: size,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
+                    }
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                        alert('خطا در تولید QR کد. لطفا مجدداً تلاش کنید.');
+                    } else {
+                        qrResultContainer.classList.remove('hidden');
+                    }
+                });
+            }
+            
+            function downloadQRCode() {
+                const canvas = qrCodeElement.querySelector('canvas');
                 if (!canvas) return;
                 
                 const link = document.createElement('a');
-                link.download = 'barcode.png';
+                link.download = 'qr-code.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             }
-
-            // Make this function available globally for history items
-            window.handleHistoryAction = function(code) {
-                navigator.clipboard.writeText(code).then(() => {
-                    alert("Copied to clipboard: " + code);
-                }).catch(err => {
-                    console.error("Failed to copy text: ", err);
-                    alert("Failed to copy text. Please try again.");
+            
+            // History functionality
+            function addToHistory(content) {
+                let history = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+                
+                // Add new scan to the beginning of the array
+                history.unshift({
+                    content: content,
+                    timestamp: new Date().toISOString()
                 });
-            };
-
-            // Clean up when leaving the page
-            window.addEventListener('beforeunload', function() {
-                if (currentStream) {
-                    currentStream.getTracks().forEach(track => track.stop());
+                
+                // Keep only the last 20 scans
+                if (history.length > 20) {
+                    history = history.slice(0, 20);
                 }
-                if (Quagga) {
-                    Quagga.stop();
+                
+                localStorage.setItem('qrHistory', JSON.stringify(history));
+            }
+            
+            function loadHistory() {
+                const historyList = document.getElementById('history-list');
+                const emptyMessage = document.getElementById('empty-history-message');
+                
+                const history = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+                
+                if (history.length === 0) {
+                    emptyMessage.classList.remove('hidden');
+                    historyList.innerHTML = '';
+                    historyList.appendChild(emptyMessage);
+                    return;
                 }
-            });
+                
+                emptyMessage.classList.add('hidden');
+                historyList.innerHTML = '';
+                
+                history.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition';
+                    
+                    const content = document.createElement('p');
+                    content.className = 'truncate';
+                    
+                    // Check if content is a URL
+                    try {
+                        const url = new URL(item.content);
+                        const link = document.createElement('a');
+                        link.href = url.href;
+                        link.target = '_blank';
+                        link.className = 'text-blue-600 hover:underline';
+                        link.textContent = url.hostname || item.content;
+                        content.appendChild(link);
+                    } catch (e) {
+                        content.textContent = item.content;
+                    }
+                    
+                    const date = document.createElement('p');
+                    date.className = 'text-xs text-gray-500 mt-1';
+                    date.textContent = new Date(item.timestamp).toLocaleString('fa-IR');
+                    
+                    historyItem.appendChild(content);
+                    historyItem.appendChild(date);
+                    
+                    historyList.appendChild(historyItem);
+                });
+            }
+        });
+        
+        // Stop camera when page is hidden
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                const cameraFeed = document.getElementById('camera-feed');
+                if (cameraFeed.srcObject) {
+                    cameraFeed.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }
         });
     </script>
 </body>
