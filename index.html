@@ -57,6 +57,11 @@
                 <div class="camera-container relative bg-black rounded-lg overflow-hidden mb-4">
                     <video id="qr-video" class="w-full h-full object-cover"></video>
                     <div class="absolute inset-0 border-4 border-green-400 rounded-lg pointer-events-none"></div>
+                    <button id="rotate-camera" class="absolute bottom-4 left-4 bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </button>
                 </div>
                 <div id="result" class="hidden p-4 bg-green-50 rounded-lg text-center">
                     <p id="qr-result" class="text-green-700"></p>
@@ -155,9 +160,7 @@
 
             startCameraBtn.addEventListener('click', async () => {
                 try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    video.srcObject = stream;
-                    video.play();
+                    await initCamera(facingMode);
                     
                     cameraAccessDiv.classList.remove('hidden');
                     permissionDeniedDiv.classList.add('hidden');
@@ -172,6 +175,34 @@
                     permissionDeniedDiv.classList.remove('hidden');
                 }
             });
+
+            let facingMode = 'environment'; // Default to rear camera
+            
+            document.getElementById('rotate-camera').addEventListener('click', async () => {
+                if (scanner) {
+                    scanner.stop();
+                    facingMode = facingMode === 'user' ? 'environment' : 'user';
+                    await initCamera(facingMode);
+                }
+            });
+
+            async function initCamera(facingMode) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode } 
+                    });
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    if (scanner) {
+                        scanner.setVideo(video);
+                        scanner.start();
+                    }
+                } catch (error) {
+                    console.error('Error rotating camera:', error);
+                    permissionDeniedDiv.classList.remove('hidden');
+                }
+            }
 
             function initializeScanner() {
                 scanner = new QrScanner(
@@ -198,19 +229,17 @@
                 // Save to history
                 saveToHistory(result.data);
                 
-                Swal.fire({
-                    title: texts.scanSuccess,
-                    text: "در حال انتقال...",
-                    icon: "success",
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    // Redirect to the scanned URL (if it's a valid URL)
-                    if (isValidUrl(result.data)) {
-                        window.location.href = result.data;
-                    }
-                    scanning = false;
-                });
+                if (isValidUrl(result.data)) {
+                    window.location.href = result.data;
+                } else {
+                    Swal.fire({
+                        title: texts.scanSuccess,
+                        text: result.data,
+                        icon: "info",
+                        confirmButtonText: "باشه"
+                    });
+                }
+                scanning = false;
             }
 
             function isValidUrl(string) {
