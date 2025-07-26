@@ -3,408 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اسکنر و تولیدکننده QR کد</title>
+    <title>اسکنر و تولید کننده QR کد</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://unpkg.com/qrcode-generator@1.4.4/qrcode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @font-face {
             font-family: 'Vazir';
-            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot');
-            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot?#iefix') format('embedded-opentype'),
-                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff2') format('woff2'),
-                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff') format('woff'),
-                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2');
         }
         body {
             font-family: 'Vazir', sans-serif;
         }
-        #scanner-container {
-            position: relative;
+        .camera-container {
+            aspect-ratio: 1/1;
         }
-        #scan-region {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            height: 70%;
-            border: 3px dashed #333;
-            border-radius: 8px;
-            pointer-events: none;
+        #qr-video {
+            transform: scaleX(-1);
+        }
+        .history-item:hover {
+            background-color: #f0fdf4;
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
-    <header class="bg-white shadow-md py-4 px-6">
-        <h1 class="text-xl font-bold text-center">اسکنر و تولیدکننده QR کد</h1>
-    </header>
-    
-    <main class="flex-1 container mx-auto px-4 py-6">
-        <div class="flex justify-center mb-4">
-            <button id="scanner-tab" class="px-4 py-2 bg-black text-white rounded-r-lg focus:outline-none">اسکنر</button>
-            <button id="generator-tab" class="px-4 py-2 bg-white text-black border border-gray-300 rounded-l-lg focus:outline-none">تولیدکننده</button>
-            <button id="history-tab" class="px-4 py-2 bg-white text-black border border-gray-300 mr-2 focus:outline-none">تاریخچه</button>
+<body class="bg-gray-50 text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-green-600 mb-2">QR کد اسکنر</h1>
+            <p class="text-gray-600">اسکن و تولید QR کد به سادگی</p>
+        </header>
+
+        <!-- Main Tabs -->
+        <div class="mb-6 flex justify-center">
+            <div class="flex bg-white rounded-lg shadow overflow-hidden">
+                <button id="scan-tab" class="px-6 py-3 bg-green-600 text-white font-medium">اسکن QR کد</button>
+                <button id="generate-tab" class="px-6 py-3 text-gray-700 font-medium hover:bg-green-50">تولید QR کد</button>
+                <button id="history-tab" class="px-6 py-3 text-gray-700 font-medium hover:bg-green-50">تاریخچه</button>
+            </div>
         </div>
-        
-        <!-- Scanner Section -->
-        <div id="scanner-section" class="bg-white rounded-lg shadow p-4">
-            <h2 class="text-lg font-semibold mb-4">اسکن QR کد</h2>
-            <p class="text-gray-600 mb-4">لطفا دسترسی به دوربین را تایید کنید تا اسکنر فعال شود.</p>
+
+        <!-- Scan Tab Content -->
+        <div id="scan-content" class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-green-600">اسکن QR کد</h2>
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 mb-2">برای اسکن QR کد، لطفاً دسترسی به دوربین را تأیید کنید:</p>
+                <button id="start-camera" class="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    فعال‌سازی دوربین
+                </button>
+            </div>
             
-            <div id="scanner-container" class="relative h-64 w-full bg-gray-200 rounded-lg overflow-hidden">
-                <video id="camera-feed" class="h-full w-full object-cover" playsinline></video>
-                <div id="scan-region" class="hidden"></div>
-                <div id="scanner-message" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                    <p id="permission-message" class="mb-4 text-center">در انتظار مجوز دسترسی به دوربین...</p>
-                    <button id="grant-access-btn" class="px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition">اعطای دسترسی</button>
+            <div id="camera-access" class="hidden">
+                <div class="camera-container relative bg-black rounded-lg overflow-hidden mb-4">
+                    <video id="qr-video" class="w-full h-full object-cover"></video>
+                    <div class="absolute inset-0 border-4 border-green-400 rounded-lg pointer-events-none"></div>
+                </div>
+                <div id="result" class="hidden p-4 bg-green-50 rounded-lg text-center">
+                    <p id="qr-result" class="text-green-700"></p>
                 </div>
             </div>
             
-            <div id="scanned-result" class="mt-4 hidden">
-                <p class="font-medium">نتیجه اسکن:</p>
-                <div class="flex items-center mt-2">
-                    <a id="result-link" href="#" target="_blank" class="text-blue-600 hover:underline truncate">مثال.ir</a>
-                    <button id="copy-result-btn" class="mr-2 px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition">کپی</button>
-                </div>
+            <div id="permission-denied" class="hidden p-4 bg-red-50 rounded-lg text-center">
+                <p class="text-red-600">دسترسی به دوربین داده نشد. لطفاً تنظیمات مرورگر خود را بررسی کنید.</p>
             </div>
-            
-            <button id="start-scan-btn" class="w-full mt-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition hidden">شروع اسکن</button>
         </div>
-        
-        <!-- Generator Section -->
-        <div id="generator-section" class="bg-white rounded-lg shadow p-4 hidden">
-            <h2 class="text-lg font-semibold mb-4">تولید QR کد</h2>
-            <p class="text-gray-600 mb-4">متن یا لینک مورد نظر خود را وارد کنید تا QR کد تولید شود.</p>
-            
+
+        <!-- Generate Tab Content -->
+        <div id="generate-content" class="hidden bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-green-600">تولید QR کد</h2>
             <div class="mb-4">
-                <label for="qr-content" class="block mb-1">محتوا:</label>
-                <input type="text" id="qr-content" placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                <label for="qr-text" class="block text-sm font-medium text-gray-700 mb-1">متن یا آدرس اینترنتی:</label>
+                <input type="text" id="qr-text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="متن یا URL را وارد کنید">
+                <button id="generate-qr" class="w-full mt-2 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    تولید QR کد
+                </button>
             </div>
             
-            <div class="mb-4">
-                <label for="qr-size" class="block mb-1">اندازه (پیکسل):</label>
-                <select id="qr-size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
-                    <option value="100">100</option>
-                    <option value="200" selected>200</option>
-                    <option value="300">300</option>
-                    <option value="400">400</option>
-                </select>
-            </div>
-            
-            <button id="generate-btn" class="w-full py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition">تولید QR کد</button>
-            
-            <div id="qr-result-container" class="mt-6 flex flex-col items-center hidden">
-                <div id="qr-code" class="p-4 bg-white rounded-lg shadow"></div>
-                <button id="download-btn" class="mt-4 px-4 py-2 bg-white text-black border border-gray-300 rounded-lg hover:bg-gray-100 transition">دانلود QR کد</button>
+            <div id="qr-code-result" class="hidden flex flex-col items-center">
+                <div id="qr-code" class="mb-4 p-4 bg-white border border-gray-200 rounded-lg"></div>
+                <button id="download-qr" class="px-6 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition">
+                    دانلود QR کد
+                </button>
             </div>
         </div>
-        
-        <!-- History Section -->
-        <div id="history-section" class="bg-white rounded-lg shadow p-4 hidden">
-            <h2 class="text-lg font-semibold mb-4">تاریخچه اسکن‌ها</h2>
-            <p class="text-gray-600 mb-4">QR کدهای اسکن شده اخیر</p>
-            
-            <div id="history-list" class="space-y-2">
-                <p id="empty-history-message" class="text-center py-8 text-gray-500">هیچ تاریخچه‌ای موجود نیست</p>
-                <!-- History items will be added here -->
+
+        <!-- History Tab Content -->
+        <div id="history-content" class="hidden bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4 text-green-600">تاریخچه اسکن‌ها</h2>
+            <div id="history-list" class="divide-y divide-gray-200">
+                <p id="empty-history" class="text-center text-gray-500 py-4">هنوز هیچ QR کدی اسکن نکرده‌اید.</p>
+                <!-- History items will be added here dynamically -->
             </div>
         </div>
-    </main>
-    
-    <footer class="bg-white py-4 px-6 text-center text-sm text-gray-600 border-t">
-        <p>تمامی حقوق محفوظ است © 2023 | اسکنر QR کد</p>
-    </footer>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Persian text constants
+            const texts = {
+                scanSuccess: "QR کد با موفقیت اسکن شد!",
+                scanning: "در حال اسکن...",
+                cameraDenied: "دسترسی به دوربین داده نشد.",
+                qrGenerated: "QR کد با موفقیت تولید شد.",
+                emptyInput: "لطفاً متن یا URL را وارد کنید."
+            };
+
             // Tab switching
-            const scannerTab = document.getElementById('scanner-tab');
-            const generatorTab = document.getElementById('generator-tab');
-            const historyTab = document.getElementById('history-tab');
-            
-            const scannerSection = document.getElementById('scanner-section');
-            const generatorSection = document.getElementById('generator-section');
-            const historySection = document.getElementById('history-section');
-            
-            function resetTabs() {
-                scannerTab.classList.remove('bg-black', 'text-white');
-                scannerTab.classList.add('bg-white', 'text-black');
-                generatorTab.classList.remove('bg-black', 'text-white');
-                generatorTab.classList.add('bg-white', 'text-black');
-                historyTab.classList.remove('bg-black', 'text-white');
-                historyTab.classList.add('bg-white', 'text-black');
-                
-                scannerSection.classList.add('hidden');
-                generatorSection.classList.add('hidden');
-                historySection.classList.add('hidden');
+            const tabs = {
+                scan: {
+                    tab: document.getElementById('scan-tab'),
+                    content: document.getElementById('scan-content')
+                },
+                generate: {
+                    tab: document.getElementById('generate-tab'),
+                    content: document.getElementById('generate-content')
+                },
+                history: {
+                    tab: document.getElementById('history-tab'),
+                    content: document.getElementById('history-content')
+                }
+            };
+
+            function switchTab(activeTab) {
+                Object.values(tabs).forEach(tab => {
+                    tab.tab.classList.remove('bg-green-600', 'text-white');
+                    tab.tab.classList.add('text-gray-700', 'hover:bg-green-50');
+                    tab.content.classList.add('hidden');
+                });
+
+                activeTab.tab.classList.add('bg-green-600', 'text-white');
+                activeTab.tab.classList.remove('text-gray-700', 'hover:bg-green-50');
+                activeTab.content.classList.remove('hidden');
             }
-            
-            function activateTab(tab, section) {
-                resetTabs();
-                tab.classList.add('bg-black', 'text-white');
-                tab.classList.remove('bg-white', 'text-black');
-                section.classList.remove('hidden');
-            }
-            
-            scannerTab.addEventListener('click', () => activateTab(scannerTab, scannerSection));
-            generatorTab.addEventListener('click', () => activateTab(generatorTab, generatorSection));
-            historyTab.addEventListener('click', () => {
-                activateTab(historyTab, historySection);
-                loadHistory();
-            });
-            
-            // Scanner functionality
-            const cameraFeed = document.getElementById('camera-feed');
-            const scanRegion = document.getElementById('scan-region');
-            const scannerMessage = document.getElementById('scanner-message');
-            const permissionMessage = document.getElementById('permission-message');
-            const grantAccessBtn = document.getElementById('grant-access-btn');
-            const startScanBtn = document.getElementById('start-scan-btn');
-            const scannedResult = document.getElementById('scanned-result');
-            const resultLink = document.getElementById('result-link');
-            const copyResultBtn = document.getElementById('copy-result-btn');
-            
-            let stream = null;
+
+            tabs.scan.tab.addEventListener('click', () => switchTab(tabs.scan));
+            tabs.generate.tab.addEventListener('click', () => switchTab(tabs.generate));
+            tabs.history.tab.addEventListener('click', () => switchTab(tabs.history));
+
+            // QR Scanner functionality
+            const video = document.getElementById('qr-video');
+            const startCameraBtn = document.getElementById('start-camera');
+            const cameraAccessDiv = document.getElementById('camera-access');
+            const permissionDeniedDiv = document.getElementById('permission-denied');
+            const resultDiv = document.getElementById('result');
+            const qrResultP = document.getElementById('qr-result');
+            const historyList = document.getElementById('history-list');
+            const emptyHistory = document.getElementById('empty-history');
+
+            let scanner = null;
             let scanning = false;
-            let animationFrame = null;
-            
-            grantAccessBtn.addEventListener('click', requestCameraAccess);
-            startScanBtn.addEventListener('click', toggleScanning);
-            copyResultBtn.addEventListener('click', copyScanResult);
-            
-            // Check if camera access was previously granted
-            if (localStorage.getItem('cameraAccessGranted') === 'true') {
-                requestCameraAccess();
-            }
-            
-            function requestCameraAccess() {
-                permissionMessage.textContent = 'در حال فعال‌سازی دوربین...';
-                grantAccessBtn.classList.add('hidden');
-                
-                navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                }).then(function(s) {
-                    stream = s;
-                    cameraFeed.srcObject = stream;
-                    scannerMessage.classList.add('hidden');
-                    startScanBtn.classList.remove('hidden');
-                    scanRegion.classList.remove('hidden');
-                    localStorage.setItem('cameraAccessGranted', 'true');
-                }).catch(function(err) {
-                    console.error("Camera access error:", err);
-                    permissionMessage.textContent = 'خطا در دسترسی به دوربین. لطفا مجدداً تلاش کنید.';
-                    grantAccessBtn.classList.remove('hidden');
-                    localStorage.setItem('cameraAccessGranted', 'false');
-                });
-            }
-            
-            function toggleScanning() {
-                if (scanning) {
-                    stopScanning();
-                    startScanBtn.textContent = 'شروع اسکن';
-                } else {
-                    startScanning();
-                    startScanBtn.textContent = 'توقف اسکن';
-                }
-            }
-            
-            function startScanning() {
-                scanning = true;
-                scannedResult.classList.add('hidden');
-                scanQRCode();
-            }
-            
-            function stopScanning() {
-                scanning = false;
-                if (animationFrame) {
-                    cancelAnimationFrame(animationFrame);
-                    animationFrame = null;
-                }
-            }
-            
-            function scanQRCode() {
-                if (!scanning) return;
-                
-                const canvasElement = document.createElement('canvas');
-                const canvas = canvasElement.getContext('2d');
-                
-                if (cameraFeed.readyState === cameraFeed.HAVE_ENOUGH_DATA) {
-                    canvasElement.height = cameraFeed.videoHeight;
-                    canvasElement.width = cameraFeed.videoWidth;
-                    canvas.drawImage(cameraFeed, 0, 0, canvasElement.width, canvasElement.height);
-                    
-                    const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                        inversionAttempts: "dontInvert",
-                    });
-                    
-                    if (code) {
-                        handleScannedCode(code.data);
-                    }
-                }
-                
-                animationFrame = requestAnimationFrame(scanQRCode);
-            }
-            
-            function handleScannedCode(data) {
-                stopScanning();
-                scannedResult.classList.remove('hidden');
-                
-                // Check if data is a URL
+
+            startCameraBtn.addEventListener('click', async () => {
                 try {
-                    const url = new URL(data);
-                    resultLink.href = url.href;
-                    resultLink.textContent = url.hostname;
-                } catch (e) {
-                    resultLink.href = '#';
-                    resultLink.textContent = data.length > 20 ? data.substring(0, 20) + '...' : data;
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    cameraAccessDiv.classList.remove('hidden');
+                    permissionDeniedDiv.classList.add('hidden');
+                    startCameraBtn.classList.add('hidden');
+                    
+                    // Initialize QR scanner
+                    if (!scanner) {
+                        initializeScanner();
+                    }
+                } catch (error) {
+                    console.error('Error accessing camera:', error);
+                    permissionDeniedDiv.classList.remove('hidden');
                 }
-                
-                // Add to history
-                addToHistory(data);
+            });
+
+            function initializeScanner() {
+                scanner = new QrScanner(
+                    video,
+                    result => {
+                        if (!scanning) {
+                            scanning = true;
+                            handleScanResult(result);
+                        }
+                    },
+                    {
+                        maxScansPerSecond: 10,
+                        highlightScanRegion: true,
+                        highlightCodeOutline: true,
+                    }
+                );
+                scanner.start();
             }
-            
-            function copyScanResult() {
-                const text = resultLink.textContent;
-                navigator.clipboard.writeText(text).then(() => {
-                    const originalText = copyResultBtn.textContent;
-                    copyResultBtn.textContent = 'کپی شد!';
-                    setTimeout(() => {
-                        copyResultBtn.textContent = originalText;
-                    }, 2000);
+
+            function handleScanResult(result) {
+                qrResultP.textContent = result.data;
+                resultDiv.classList.remove('hidden');
+                
+                // Save to history
+                saveToHistory(result.data);
+                
+                Swal.fire({
+                    title: texts.scanSuccess,
+                    text: "در حال انتقال...",
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Redirect to the scanned URL (if it's a valid URL)
+                    if (isValidUrl(result.data)) {
+                        window.location.href = result.data;
+                    }
+                    scanning = false;
                 });
             }
-            
-            // Generator functionality
-            const qrContent = document.getElementById('qr-content');
-            const qrSize = document.getElementById('qr-size');
-            const generateBtn = document.getElementById('generate-btn');
-            const qrResultContainer = document.getElementById('qr-result-container');
-            const qrCodeElement = document.getElementById('qr-code');
-            const downloadBtn = document.getElementById('download-btn');
-            
-            generateBtn.addEventListener('click', generateQRCode);
-            downloadBtn.addEventListener('click', downloadQRCode);
-            
-            function generateQRCode() {
-                const content = qrContent.value.trim();
-                const size = parseInt(qrSize.value);
-                
-                if (!content) {
-                    alert('لطفا محتوایی برای تولید QR کد وارد کنید');
-                    return;
+
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
                 }
-                
-                qrCodeElement.innerHTML = '';
-                QRCode.toCanvas(qrCodeElement, content, {
-                    width: size,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
-                    }
-                }, function(error) {
-                    if (error) {
-                        console.error(error);
-                        alert('خطا در تولید QR کد. لطفا مجدداً تلاش کنید.');
-                    } else {
-                        qrResultContainer.classList.remove('hidden');
-                    }
-                });
             }
-            
-            function downloadQRCode() {
-                const canvas = qrCodeElement.querySelector('canvas');
-                if (!canvas) return;
+
+            function saveToHistory(data) {
+                // Get existing history or initialize empty array
+                let history = JSON.parse(localStorage.getItem('qrHistory')) || [];
                 
-                const link = document.createElement('a');
-                link.download = 'qr-code.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }
-            
-            // History functionality
-            function addToHistory(content) {
-                let history = JSON.parse(localStorage.getItem('qrHistory') || '[]');
-                
-                // Add new scan to the beginning of the array
+                // Add new scan (with timestamp)
                 history.unshift({
-                    content: content,
-                    timestamp: new Date().toISOString()
+                    data: data,
+                    date: new Date().toLocaleString('fa-IR'),
+                    isUrl: isValidUrl(data)
                 });
                 
-                // Keep only the last 20 scans
+                // Keep only last 20 items
                 if (history.length > 20) {
                     history = history.slice(0, 20);
                 }
                 
+                // Save to localStorage
                 localStorage.setItem('qrHistory', JSON.stringify(history));
-            }
-            
-            function loadHistory() {
-                const historyList = document.getElementById('history-list');
-                const emptyMessage = document.getElementById('empty-history-message');
                 
-                const history = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+                // Update history display
+                renderHistory();
+            }
+
+            function renderHistory() {
+                const history = JSON.parse(localStorage.getItem('qrHistory')) || [];
                 
                 if (history.length === 0) {
-                    emptyMessage.classList.remove('hidden');
+                    emptyHistory.classList.remove('hidden');
                     historyList.innerHTML = '';
-                    historyList.appendChild(emptyMessage);
                     return;
                 }
                 
-                emptyMessage.classList.add('hidden');
+                emptyHistory.classList.add('hidden');
                 historyList.innerHTML = '';
                 
                 history.forEach((item, index) => {
                     const historyItem = document.createElement('div');
-                    historyItem.className = 'p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition';
+                    historyItem.className = 'history-item py-3 px-4 cursor-pointer transition';
                     
-                    const content = document.createElement('p');
-                    content.className = 'truncate';
-                    
-                    // Check if content is a URL
-                    try {
-                        const url = new URL(item.content);
-                        const link = document.createElement('a');
-                        link.href = url.href;
-                        link.target = '_blank';
-                        link.className = 'text-blue-600 hover:underline';
-                        link.textContent = url.hostname || item.content;
-                        content.appendChild(link);
-                    } catch (e) {
-                        content.textContent = item.content;
+                    let content = item.data;
+                    if (content.length > 50) {
+                        content = content.substring(0, 50) + '...';
                     }
                     
-                    const date = document.createElement('p');
-                    date.className = 'text-xs text-gray-500 mt-1';
-                    date.textContent = new Date(item.timestamp).toLocaleString('fa-IR');
+                    historyItem.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">${item.date}</p>
+                                <p class="${item.isUrl ? 'text-green-600' : 'text-gray-800'}">${content}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    `;
                     
-                    historyItem.appendChild(content);
-                    historyItem.appendChild(date);
+                    historyItem.addEventListener('click', () => {
+                        if (item.isUrl) {
+                            window.open(item.data, '_blank');
+                        } else {
+                            Swal.fire({
+                                title: 'محتویات QR کد',
+                                text: item.data,
+                                icon: 'info'
+                            });
+                        }
+                    });
                     
                     historyList.appendChild(historyItem);
                 });
             }
-        });
-        
-        // Stop camera when page is hidden
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                const cameraFeed = document.getElementById('camera-feed');
-                if (cameraFeed.srcObject) {
-                    cameraFeed.srcObject.getTracks().forEach(track => track.stop());
+
+            // QR Generator functionality
+            const qrTextInput = document.getElementById('qr-text');
+            const generateQrBtn = document.getElementById('generate-qr');
+            const qrCodeResult = document.getElementById('qr-code-result');
+            const qrCodeDiv = document.getElementById('qr-code');
+            const downloadQrBtn = document.getElementById('download-qr');
+
+            generateQrBtn.addEventListener('click', () => {
+                const text = qrTextInput.value.trim();
+                
+                if (!text) {
+                    Swal.fire({
+                        title: 'خطا',
+                        text: texts.emptyInput,
+                        icon: 'error'
+                    });
+                    return;
                 }
-            }
+                
+                // Generate QR code
+                const qr = qrcode(0, 'L');
+                qr.addData(text);
+                qr.make();
+                
+                // If you want HTML output
+                qrCodeDiv.innerHTML = qr.createSvgTag({
+                    scaling: 10,
+                    margin: 4,
+                    fill: '#065f46'
+                });
+                
+                // Set download handler
+                const svg = qrCodeDiv.querySelector('svg');
+                svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                
+                downloadQrBtn.onclick = () => {
+                    const serializer = new XMLSerializer();
+                    const svgBlob = new Blob([serializer.serializeToString(svg)], {type: 'image/svg+xml;charset=utf-8'});
+                    const url = URL.createObjectURL(svgBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `qr-code-${Date.now()}.svg`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+                
+                qrCodeResult.classList.remove('hidden');
+                
+                Swal.fire({
+                    title: texts.qrGenerated,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+
+            // Initialize history on load
+            renderHistory();
         });
     </script>
 </body>
