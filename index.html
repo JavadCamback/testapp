@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://s.cafebazaar.ir/images/upload/icons/com.wPixSaz_18973966-652d8de4-5280-4b09-ba06-afd573e2e00f.png">
     <title>Picksaz - مونتاژ کامپیوتر حرفه‌ای</title>
+    <meta content="" name="keywords" content="پیکس ساز, انتخاب قطعات کامپیوتر, قیمت قطعات کامپیوتر, Pixsaz, پیکس ساز, مونتاژ قطعات کامپیوتر, کاربرد قطعات کامپیوتر>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -147,124 +148,123 @@
                     </div>
                     <span class="text-purple-300 text-sm" id="cpu-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
+            
+                <!-- فیلد جستجو خارج از بخش اسکرول -->
+                <input type="text" placeholder="جستجوی مدل CPU..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('cpu', this.value)">
+            
+                <!-- فقط لیست اسکرول‌پذیر باشه -->
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
                     <ul id="cpu-list" class="space-y-2">
-                        <!-- CPU items will be added here by JavaScript -->
+                        <!-- آیتم‌های CPU اینجا اضافه می‌شن -->
                     </ul>
                 </div>
-            </div>
+            </div>            
 
             <!-- Motherboard Section -->
             <div id="motherboard-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-project-diagram text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">مادربرد</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="motherboard-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-project-diagram text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">مادربرد</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="motherboard-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="motherboard-list" class="space-y-2">
-                        <!-- Motherboard items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل مادربرد..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('motherboard', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="motherboard-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
+              
 
             <!-- GPU Section -->
             <div id="gpu-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-gamepad text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">کارت گرافیک (GPU)</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="gpu-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-gamepad text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">کارت گرافیک (GPU)</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="gpu-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="gpu-list" class="space-y-2">
-                        <!-- GPU items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل GPU..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('gpu', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="gpu-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- RAM Section -->
             <div id="ram-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-memory text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">رم (RAM)</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="ram-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-memory text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">رم (RAM)</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="ram-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="ram-list" class="space-y-2">
-                        <!-- RAM items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل RAM..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('ram', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="ram-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- Power Supply Section -->
             <div id="psu-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-plug text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">منبع تغذیه (PSU)</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="psu-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-plug text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">منبع تغذیه (PSU)</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="psu-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="psu-list" class="space-y-2">
-                        <!-- PSU items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل PSU..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('psu', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="psu-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- Case Section -->
             <div id="case-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-box-open text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">کیس</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="case-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-box-open text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">کیس</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="case-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="case-list" class="space-y-2">
-                        <!-- Case items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل کیس..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('case', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="case-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- SSD Section -->
             <div id="ssd-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-hdd text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">حافظه SSD</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="ssd-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-hdd text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">حافظه SSD</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="ssd-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="ssd-list" class="space-y-2">
-                        <!-- SSD items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل SSD..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('ssd', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="ssd-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- HDD Section -->
             <div id="hdd-card" class="component-card bg-gray-800 rounded-xl p-6 border border-gray-700 cursor-pointer">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2 space-x-reverse">
-                        <i class="fas fa-database text-purple-400"></i>
-                        <h2 class="text-lg font-semibold">حافظه HDD</h2>
-                    </div>
-                    <span class="text-purple-300 text-sm" id="hdd-selected-text">انتخاب نشده</span>
+                  <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fas fa-database text-purple-400"></i>
+                    <h2 class="text-lg font-semibold">حافظه HDD</h2>
+                  </div>
+                  <span class="text-purple-300 text-sm" id="hdd-selected-text">انتخاب نشده</span>
                 </div>
-                <div class="h-40 overflow-y-auto scrollbar pr-2 mb-4">
-                    <ul id="hdd-list" class="space-y-2">
-                        <!-- HDD items will be added here by JavaScript -->
-                    </ul>
+                <input type="text" placeholder="جستجوی مدل HDD..." class="w-full mb-3 p-2 rounded bg-gray-700 text-white text-sm" oninput="filterList('hdd', this.value)">
+                <div class="h-72 overflow-y-auto scrollbar pr-2">
+                  <ul id="hdd-list" class="space-y-2"></ul>
                 </div>
-            </div>
+              </div>
 
             <!-- Selected Components -->
             <div id="selected-components-card" class="md:col-span-2 lg:col-span-3 bg-gray-800 rounded-xl p-6 border border-purple-700">
@@ -442,46 +442,259 @@
         </div>
     </footer>
     <script>
+
+
+
+
+
+
+
+function filterList(componentType, searchText) {
+    const listElement = document.getElementById(`${componentType}-list`);
+    const items = components[componentType];
+    const filteredItems = items.filter(item =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+
+    // Render the filtered list
+    listElement.innerHTML = '';
+    filteredItems.forEach((component, index) => {
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center p-2 hover:bg-gray-700 rounded-lg cursor-pointer';
+        li.innerHTML = `
+            <div>
+                <span class="text-gray-300">${component.name}</span>
+            </div>
+            <div class="flex items-center">
+                <span class="text-purple-300 ml-2">${component.price.toLocaleString()}</span>
+                <span class="text-gray-400 text-xs">تومان</span>
+            </div>
+        `;
+        li.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectComponent(componentType, items.indexOf(component));
+        });
+        listElement.appendChild(li);
+    });
+}
+
+
+
+
+
+
+
+
+
         // Component data (as of July 20, 2025 - updated prices in Persian market)
         const components = {
             cpu: [
-                { name: "Intel Core i3-13100F", price: 5500000 },
-                { name: "AMD Ryzen 5 7600X", price: 12000000 },
-                { name: "Intel Core i5-13600K", price: 15000000 },
-                { name: "AMD Ryzen 7 7700X", price: 18000000 },
-                { name: "Intel Core i7-13700K", price: 22000000 },
-                { name: "AMD Ryzen 9 7900X", price: 28000000 },
-                { name: "Intel Core i9-13900K", price: 35000000 },
-                { name: "AMD Ryzen 9 7950X3D", price: 41000000 },
-                { name: "Intel Core i9-13900KS", price: 45000000 },
-                { name: "AMD Ryzen Threadripper 7995WX", price: 1150000000 },
+                
+  
+            { name: "Intel Core i3-12100F", price: 5000000 },
+  { name: "Intel Core i3-13100F", price: 5500000 },
+  { name: "Intel Core i3-10100F", price: 5780000 },
+  { name: "Intel Core i3-12100", price: 7950000 },
+  { name: "Intel Core i3-14100F", price: 6200000 },
+  { name: "Intel Core i3-14100", price: 7400000 },
+  { name: "Intel Core i3-6100", price: 880000 },
+  { name: "Intel Core i3-4160", price: 390000 },
+  { name: "Intel Core i3-3220", price: 430000 },
+  { name: "Intel Core i3-4150", price: 375000 },
+  { name: "Intel Core i5-12400F", price: 9600000 },
+  { name: "Intel Core i5-13400F", price: 10300000 },
+  { name: "Intel Core i5-14400F", price: 10980000 },
+  { name: "Intel Core i5-13400", price: 11990000 },
+  { name: "Intel Core i5-12400", price: 10800000 },
+  { name: "Intel Core i5-14600KF", price: 20100000 },
+  { name: "Intel Core i5-14600K", price: 18790000 },
+  { name: "Intel Core i5-9400F", price: 4810000 },
+  { name: "Intel Core i5-4590", price: 1470000 },
+  { name: "Intel Core i5-3470", price: 1217000 },
+  { name: "Intel Core i5-14500", price: 13900000 },
+  { name: "Intel Core i5-14400", price: 12500000 },
+  { name: "Intel Core i5-12600K", price: 16500000 },
+  { name: "Intel Core i5-13600K", price: 15000000 },
+  { name: "Intel Core i7-12700K", price: 22850000 },
+  { name: "Intel Core i7-13700K", price: 22000000 },
+  { name: "Intel Core i7-14700K", price: 27500000 },
+  { name: "Intel Core i7-12700", price: 23400000 },
+  { name: "Intel Core i7-13700", price: 27050000 },
+  { name: "Intel Core i7-14700", price: 28900000 },
+  { name: "Intel Core i7-11700K", price: 19800000 },
+  { name: "Intel Core i7-10700K", price: 17200000 },
+  { name: "Intel Core i9-13900K", price: 35000000 },
+  { name: "Intel Core i9-13900KS", price: 45000000 },
+  { name: "Intel Core i9-14900K", price: 39500000 },
+  { name: "Intel Core i9-14900KS", price: 47500000 },
+  { name: "Intel Core i9-12900K", price: 31000000 },
+  { name: "Intel Core i9-11900K", price: 28500000 },
+  { name: "Intel Core i9-10900K", price: 26000000 },
+  { name: "Intel Core Ultra 7 265K", price: 29300000 },
+  { name: "Intel Core Ultra 9 285K", price: 43500000 },
+  { name: "Intel Core Ultra 5 245K", price: 21500000 },
+  { name: "Intel Core i3-12100 Alder Lake", price: 7348000 },
+  { name: "Intel Core i5-12400F Box", price: 9100000 },
+  { name: "Intel Core i5-13400F Box", price: 10300000 },
+  { name: "Intel Core i7-14700K Tray", price: 29300000 },
+  { name: "Intel Core i7-12700K Tray", price: 22850000 },
+  { name: "Intel Core i5-14600 Box", price: 28800000 },
+  { name: "Intel Core i7-12700 Tray", price: 23400000 },
+  { name: "Intel Core i7-13700 Tray", price: 27050000 },
+  { name: "Intel Core i3-10100F Box", price: 5780000 },
+
+  { name: "AMD Ryzen 5 7500F", price: 10850000 },
+  { name: "AMD Ryzen 5 7600X", price: 14950000 },
+  { name: "AMD Ryzen 5 5600X", price: 9100000 },
+  { name: "AMD Ryzen 5 9600X", price: 18000000 },
+  { name: "AMD Ryzen 7 7700X", price: 18000000 },
+  { name: "AMD Ryzen 7 7800X3D", price: 34500000 },
+  { name: "AMD Ryzen 7 9800X3D", price: 47299000 },
+  { name: "AMD Ryzen 9 7900X", price: 28000000 },
+  { name: "AMD Ryzen 9 7950X3D", price: 41000000 },
+  { name: "AMD Ryzen Threadripper 7995WX", price: 1150000000 }
                 
             ],
             motherboard: [
-                { name: "Gigabyte B760M DS3H", price: 7000000 },
-                { name: "ASUS TUF B650-PLUS", price: 11000000 },
-                { name: "MSI PRO Z790-P", price: 15000000 },
-                { name: "Gigabyte X670 GAMING X AX", price: 18000000 },
-                { name: "ASUS ROG STRIX Z790-E", price: 25000000 },
-                { name: "MSI MEG X670E ACE", price: 30000000 },
-                { name: "ASUS ROG MAXIMUS Z790 HERO", price: 40000000 },
-                { name: "Gigabyte X670E AORUS XTREME", price: 42000000 },
-                { name: "ASUS ROG CROSSHAIR X670E EXTREME", price: 50000000 },
-                { name: "ASUS WS W790E-SAGE SE", price: 150000000 }
+                
+  { name: "ASRock H610M-HDV/M.2 D5", price: 8500000 },
+  { name: "ASUS PRIME H610M-D D4", price: 9200000 },
+  { name: "MSI PRO H610M-G DDR4", price: 9800000 },
+  { name: "GIGABYTE H610M S2H DDR4", price: 9900000 },
+  { name: "ASUS PRIME B760M-K D4", price: 11000000 },
+  { name: "MSI PRO B760M-E DDR4", price: 11200000 },
+  { name: "GIGABYTE B760M DS3H AX DDR4", price: 11800000 },
+  { name: "ASRock B760M-HDV/M.2 D4", price: 12000000 },
+  { name: "ASUS PRIME B760M-A WIFI D4", price: 13500000 },
+  { name: "MSI PRO B760M-P DDR4", price: 13800000 },
+  { name: "GIGABYTE B760M POWER DDR5", price: 14000000 },
+  { name: "ASUS PRIME B650-PLUS", price: 14500000 },
+  { name: "MSI B650M PRO WIFI", price: 14900000 },
+  { name: "ASRock B650M PG Riptide", price: 15200000 },
+  { name: "GIGABYTE B650M DS3H AX", price: 15500000 },
+  { name: "ASUS TUF B650M-PLUS WIFI", price: 16500000 },
+  { name: "MSI MAG B650M MORTAR WIFI", price: 17200000 },
+  { name: "ASRock B650E PG-ITX WIFI", price: 18500000 },
+  { name: "GIGABYTE B650 AORUS ELITE AX", price: 19000000 },
+  { name: "ASUS PRIME Z790-P WIFI", price: 21500000 },
+  { name: "MSI PRO Z790-P WIFI DDR5", price: 22500000 },
+  { name: "GIGABYTE Z790 UD AX DDR5", price: 23500000 },
+  { name: "ASRock Z790 PG Lightning", price: 24000000 },
+  { name: "ASUS TUF GAMING Z790-PLUS WIFI", price: 24800000 },
+  { name: "MSI MAG Z790 TOMAHAWK WIFI", price: 25500000 },
+  { name: "GIGABYTE Z790 AORUS ELITE AX", price: 26500000 },
+  { name: "ASRock Z790 Steel Legend WIFI", price: 27500000 },
+  { name: "ASUS ROG STRIX Z790-A GAMING WIFI", price: 28500000 },
+  { name: "MSI MPG Z790 EDGE WIFI", price: 29500000 },
+  { name: "GIGABYTE Z790 AORUS MASTER", price: 30500000 },
+  { name: "ASUS ROG MAXIMUS Z790 HERO", price: 31500000 },
+  { name: "MSI MEG Z790 ACE", price: 32500000 },
+  { name: "ASRock Z790 Taichi", price: 33500000 },
+  { name: "GIGABYTE Z790 Xtreme", price: 34500000 },
+  { name: "ASUS ROG MAXIMUS Z790 EXTREME", price: 35500000 },
+  { name: "MSI MEG Z790 GODLIKE", price: 36500000 },
+  { name: "ASRock WRX80 Creator", price: 37500000 },
+  { name: "ASUS Pro WS WRX90E-SAGE SE WIFI", price: 38500000 },
+  { name: "GIGABYTE TRX50 AERO D", price: 39500000 },
+  { name: "MSI TRX50 PRO WIFI", price: 40500000 },
+  { name: "ASUS ROG CROSSHAIR X670E HERO", price: 41500000 },
+  { name: "GIGABYTE X670E AORUS MASTER", price: 42500000 },
+  { name: "MSI MEG X670E ACE", price: 43500000 },
+  { name: "ASRock X670E Taichi", price: 44500000 },
+  { name: "ASUS ROG CROSSHAIR X670E EXTREME", price: 45500000 },
+  { name: "GIGABYTE X670E AORUS XTREME", price: 46500000 },
+  { name: "MSI MEG X670E GODLIKE", price: 47500000 },
+  { name: "ASRock X670E Steel Legend", price: 48500000 },
+  { name: "ASUS TUF GAMING X670E-PLUS WIFI", price: 49500000 },
+  { name: "GIGABYTE X670E UD AX", price: 50500000 }
             ],
             gpu: [
-                { name: "NVIDIA GeForce RTX 4060 8GB", price: 20000000 },
-                { name: "AMD Radeon RX 7600 8GB", price: 22000000 },
-                { name: "NVIDIA GeForce RTX 4070 12GB", price: 35000000 },
-                { name: "AMD Radeon RX 7800 XT 16GB", price: 40000000 },
-                { name: "NVIDIA GeForce RTX 4080 16GB", price: 70000000 },
-                { name: "AMD Radeon RX 7900 XTX 24GB", price: 75000000 },
-                { name: "NVIDIA GeForce RTX 4090 24GB", price: 120000000 },
-                { name: "NVIDIA RTX 6000 Ada Generation 48GB", price: 500000000 },
-                { name: "AMD Radeon PRO W7900 48GB", price: 350000000 },
-                { name: "NVIDIA RTX 4090 Ti 24GB (Kingpin)", price: 200000000 }
+                
+  { name: "NVIDIA GeForce GT 730 2GB", price: 5150000 },
+  { name: "NVIDIA GeForce GT 1030 2GB", price: 6150000 },
+  { name: "NVIDIA GeForce GTX 750 Ti 4GB", price: 11000000 },
+  { name: "NVIDIA GeForce GTX 1630 4GB", price: 16500000 },
+  { name: "NVIDIA GeForce GTX 1050 Ti 4GB", price: 17800000 },
+  { name: "NVIDIA GeForce GTX 1650 4GB", price: 19800000 },
+  { name: "NVIDIA GeForce GTX 1660 SUPER 6GB", price: 21000000 },
+  { name: "NVIDIA GeForce RTX 3050 6GB", price: 18400000 },
+  { name: "NVIDIA GeForce RTX 3050 8GB", price: 22150000 },
+  { name: "NVIDIA GeForce RTX 3060 12GB", price: 24530000 },
+  { name: "NVIDIA GeForce RTX 3060 Ti 8GB", price: 25800000 },
+  { name: "NVIDIA GeForce RTX 4060 8GB", price: 24900000 },
+  { name: "NVIDIA GeForce RTX 4060 Ti 8GB", price: 29400000 },
+  { name: "NVIDIA GeForce RTX 4060 Ti 16GB", price: 34000000 },
+  { name: "NVIDIA GeForce RTX 4070 12GB", price: 30500000 },
+  { name: "NVIDIA GeForce RTX 4070 SUPER 12GB", price: 47100000 },
+  { name: "NVIDIA GeForce RTX 4070 Ti 12GB", price: 42500000 },
+  { name: "NVIDIA GeForce RTX 4070 Ti SUPER 12GB", price: 59700000 },
+  { name: "NVIDIA GeForce RTX 4080 16GB", price: 80300000 },
+  { name: "NVIDIA GeForce RTX 4080 SUPER 16GB", price: 86500000 },
+  { name: "NVIDIA GeForce RTX 4090 24GB", price: 250000000 },
+  { name: "NVIDIA GeForce RTX 5090 32GB", price: 326690000 },
+  { name: "NVIDIA GeForce RTX 5070 12GB", price: 65240000 },
+  { name: "NVIDIA GeForce RTX 5070 Ti 16GB", price: 94180000 },
+  { name: "NVIDIA GeForce RTX 5070 Ti SUPER 16GB", price: 109000000 },
+  { name: "NVIDIA GeForce RTX 5060 8GB", price: 38220000 },
+  { name: "NVIDIA GeForce RTX 5060 Ti 8GB", price: 47130000 },
+  { name: "NVIDIA GeForce RTX 5060 Ti 16GB", price: 48230000 },
+  { name: "NVIDIA GeForce RTX 5080 16GB", price: 127850000 },
+  { name: "NVIDIA GeForce RTX 5090 OC 32GB", price: 368550000 },
+  { name: "NVIDIA GeForce RTX 3060 OC Dual 12GB", price: 32200000 },
+  { name: "NVIDIA GeForce RTX 4060 OC Dual 8GB", price: 41350000 },
+  { name: "NVIDIA GeForce RTX 4060 Ti OC Dual 8GB", price: 50250000 },
+  { name: "NVIDIA GeForce RTX 5060 Ti OC Dual 16GB", price: 57700000 },
+  { name: "NVIDIA GeForce RTX 4070 Ti OC Dual 12GB", price: 57400000 },
+  { name: "NVIDIA GeForce RTX 4080 OC Dual 16GB", price: 86500000 },
+  { name: "NVIDIA GeForce RTX 4090 OC Dual 24GB", price: 259000000 },
+  { name: "NVIDIA GeForce T400 2GB", price: 45000000 },
+  { name: "NVIDIA GeForce T1000 4GB", price: 41500000 },
+  { name: "NVIDIA GeForce GTX 1660 Ti 6GB", price: 23500000 },
+  { name: "NVIDIA GeForce GTX 1070 8GB", price: 18500000 },
+  { name: "NVIDIA GeForce GTX 1080 Ti 11GB", price: 29500000 },
+  { name: "NVIDIA GeForce RTX 2070 SUPER 8GB", price: 31500000 },
+  { name: "NVIDIA GeForce RTX 2080 Ti 11GB", price: 38500000 },
+  { name: "NVIDIA GeForce RTX 3060 Ti OC Gaming 8GB", price: 25800000 },
+  { name: "NVIDIA GeForce RTX 4070 Ti OC Gaming 12GB", price: 42500000 },
+  { name: "NVIDIA GeForce RTX 4080 Ti OC Gaming 16GB", price: 87500000 },
+
+  { name: "AMD Radeon RX 550 4GB", price: 4950000 },
+  { name: "AMD Radeon RX 580 8GB", price: 8345000 },
+  { name: "AMD Radeon RX 590 8GB", price: 8450000 },
+  { name: "AMD Radeon RX 5600 XT 6GB", price: 9800000 },
+  { name: "AMD Radeon RX 5700 XT 8GB", price: 16000000 },
+  { name: "AMD Radeon RX 6600 XT 8GB", price: 21500000 },
+  { name: "AMD Radeon RX 6800 XT 16GB", price: 33500000 },
+  { name: "AMD Radeon RX 6900 XT 16GB", price: 36570000 },
+  { name: "AMD Radeon RX 9060 XT 16GB", price: 51350000 },
+  { name: "AMD Radeon RX 9070 XT OC 16GB", price: 87435000 }
             ],
             ram: [
+            { name: "Kingston DDR3 1600MHz 8GB CL11", price: 650000 },
+  { name: "Corsair Vengeance LPX DDR4 3200MHz 8GB CL16", price: 2449000 },
+  { name: "Crucial DDR4 3200MHz 8GB CL22", price: 1759000 },
+  { name: "Kingston HyperX Fury DDR4 2666MHz 8GB CL15", price: 1300000 },
+  { name: "Corsair Vengeance LPX DDR4 3200MHz 16GB CL16", price: 3518000 },
+  { name: "Crucial DDR4 2400MHz 16GB CL17", price: 2250000 },
+  { name: "Kingston DDR3 1600MHz 4GB CL11", price: 340000 },
+  { name: "Corsair Vengeance RGB DDR4 3200MHz 16GB CL16", price: 5175000 },
+  { name: "G.Skill Trident Z RGB DDR4 3200MHz 16GB CL16", price: 4980000 },
+  { name: "XPG Lancer DDR5 5200MHz 16GB CL38", price: 4090000 },
+  { name: "Corsair Vengeance DDR5 5200MHz 16GB CL40", price: 4350000 },
+  { name: "Crucial DDR5 4800MHz 16GB CL40", price: 3380000 },
+  { name: "Corsair Vengeance RGB DDR5 6000MHz 32GB CL36", price: 9650000 },
+  { name: "G.Skill Trident Z5 RGB DDR5 6000MHz 32GB CL36", price: 9840000 },
+  { name: "Corsair Vengeance LPX DDR4 3200MHz 32GB CL16", price: 7100000 },
+  { name: "Kingston DDR3 1333MHz 4GB CL9", price: 304000 },
+  { name: "Corsair Vengeance RGB Pro DDR4 3200MHz 32GB CL16", price: 9495000 },
+  { name: "Crucial DDR4 2666MHz 8GB CL19", price: 1127000 },
+  { name: "Corsair Vengeance LPX DDR4 3200MHz 16GB CL16 Dual", price: 5380000 },
+  { name: "XPG Lancer Blade DDR5 5600MHz 32GB CL46", price: 6999000 },
+  { name: "Corsair Vengeance DDR5 5600MHz 32GB CL36", price: 8699000 },
+  { name: "Kingston DDR2 800MHz 2GB", price: 297000 },
+  { name: "Samsung DDR3 1600MHz 8GB CL11", price: 760000 },
+  { name: "ADATA DDR4 3200MHz 16GB CL22", price: 2890000 },
+  { name: "SK Hynix DDR4 2666MHz 16GB CL19", price: 2490000 },
                 { name: "ADATA 16GB DDR4 3200MHz", price: 3000000 },
                 { name: "Corsair Vengeance 16GB DDR4 3600MHz", price: 4000000 },
                 { name: "G.Skill Trident Z 32GB DDR4 3600MHz", price: 7000000 },
@@ -494,18 +707,89 @@
                 { name: "Samsung 256GB DDR5 ECC RDIMM", price: 80000000 }
             ],
             psu: [
-                { name: "Cooler Master MWE 550W Bronze", price: 5000000 },
-                { name: "Seasonic S12III 650W Bronze", price: 6000000 },
-                { name: "Corsair CX650M Bronze", price: 7000000 },
-                { name: "EVGA 750 G5 Gold", price: 9000000 },
-                { name: "Thermaltake Toughpower GF1 850W Gold", price: 12000000 },
-                { name: "Corsair RM850x Gold", price: 15000000 },
-                { name: "Seasonic PRIME TX-1000 Titanium", price: 20000000 },
-                { name: "ASUS ROG Thor 1200W Platinum II", price: 25000000 },
-                { name: "be quiet! Dark Power Pro 12 1500W Titanium", price: 35000000 },
-                { name: "SilverStone ST2000-PTS 2000W Titanium", price: 60000000 }
+            { name: "Green GP330A-ECO", price: 980000 },
+  { name: "Green GP400A-ECO", price: 1180000 },
+  { name: "Green GP500A-ECO", price: 1380000 },
+  { name: "Green GP600A-ECO", price: 1580000 },
+  { name: "Green GP650A-ECO", price: 1780000 },
+  { name: "Green GP700A-ECO", price: 1980000 },
+  { name: "Green GP750B-HP", price: 2480000 },
+  { name: "Green GP850B-HP", price: 2980000 },
+  { name: "Green GP1050B-HP", price: 3680000 },
+  { name: "Green GP1350B-OCPT", price: 4980000 },
+  { name: "Cooler Master MWE 550 Bronze V2", price: 2650000 },
+  { name: "Cooler Master MWE 650 Bronze V2", price: 2950000 },
+  { name: "Cooler Master MWE 750 Bronze V2", price: 3250000 },
+  { name: "Cooler Master MWE 850 Bronze V2", price: 3550000 },
+  { name: "Cooler Master V850 Gold V2", price: 4950000 },
+  { name: "Cooler Master V1000 Gold V2", price: 5850000 },
+  { name: "Thermaltake Smart RGB 500W", price: 2150000 },
+  { name: "Thermaltake Smart RGB 600W", price: 2350000 },
+  { name: "Thermaltake Smart BX1 650W Bronze", price: 2750000 },
+  { name: "Thermaltake Toughpower GF1 750W Gold", price: 4450000 },
+  { name: "Thermaltake Toughpower GF1 850W Gold", price: 4950000 },
+  { name: "ASUS TUF Gaming 650W Bronze", price: 3650000 },
+  { name: "ASUS ROG Strix 750W Gold", price: 5250000 },
+  { name: "ASUS ROG Thor 850W Platinum", price: 7850000 },
+  { name: "ASUS ROG Thor 1000W Platinum II", price: 9450000 },
+  { name: "DeepCool PK550D Bronze", price: 2150000 },
+  { name: "DeepCool PK650D Bronze", price: 2450000 },
+  { name: "DeepCool PQ750M Gold", price: 3950000 },
+  { name: "DeepCool PX1000G Gold", price: 5650000 },
+  { name: "DeepCool PX1300G Platinum", price: 7250000 }
             ],
             case: [
+
+  { name: "Green Z1 ARGB", price: 2150000 },
+  { name: "Green G1 Plus", price: 2200000 },
+  { name: "Green X3+ Viper", price: 4500000 },
+  { name: "Green Z5 Surena", price: 5100000 },
+  { name: "Green Z6 Spectrum", price: 6200000 },
+  { name: "Green Z7 Crystal", price: 6900000 },
+  { name: "Green Z8 Valkyrie", price: 7800000 },
+  { name: "Green Z9 Blade", price: 8500000 },
+  { name: "Green Z10 Phantom", price: 9200000 },
+  { name: "Green Z11 Nova", price: 9900000 },
+  { name: "TSCO GC 4492 GAMING", price: 5200000 },
+  { name: "TSCO GC 4495 RGB", price: 5800000 },
+  { name: "TSCO GC 4498 ARGB", price: 6400000 },
+  { name: "TSCO GC 4500 GAMING", price: 7100000 },
+  { name: "Lian Li Lancool II Mesh RGB White", price: 6850000 },
+  { name: "Lian Li O11 Dynamic EVO", price: 9800000 },
+  { name: "Lian Li PC-O11D Mini Snow Edition", price: 11200000 },
+  { name: "Lian Li PC-O11D XL ROG Certified", price: 14500000 },
+  { name: "MSI MPG GUNGNIR 300R AIRFLOW", price: 11699000 },
+  { name: "MSI MPG VELOX 100R", price: 6950000 },
+  { name: "MSI MPG VELOX 100R WHITE", price: 10299000 },
+  { name: "MSI MAG FORGE 100M", price: 4950000 },
+  { name: "MSI MAG SHIELD 110R", price: 5650000 },
+  { name: "MSI MAG VAMPIRIC 300R", price: 8750000 },
+  { name: "Thermaltake V200 TG RGB", price: 6450000 },
+  { name: "Thermaltake S100 TG Snow", price: 7200000 },
+  { name: "Thermaltake Divider 300 TG ARGB", price: 8950000 },
+  { name: "Thermaltake View 71 TG RGB", price: 12900000 },
+  { name: "Thermaltake Core P3 TG Pro", price: 14200000 },
+  { name: "DeepCool CK500", price: 4500000 },
+  { name: "DeepCool CH510 Mesh Digital", price: 6200000 },
+  { name: "DeepCool MACUBE 310", price: 5800000 },
+  { name: "DeepCool MATREXX 55 V3 ARGB", price: 4950000 },
+  { name: "DeepCool MATREXX 70 ADD-RGB", price: 7250000 },
+  { name: "DeepCool GamerStorm CL500", price: 8100000 },
+  { name: "ASUS TUF Gaming GT501", price: 11800000 },
+  { name: "ASUS ROG Strix Helios", price: 16500000 },
+  { name: "ASUS ROG Hyperion GR701", price: 24500000 },
+  { name: "ASUS Prime AP201", price: 6900000 },
+  { name: "AeroCool Cylon RGB", price: 3850000 },
+  { name: "AeroCool Bolt Mini", price: 2950000 },
+  { name: "AeroCool Trinity Mini", price: 3250000 },
+  { name: "Cooler Master MasterBox Q300L", price: 4650000 },
+  { name: "Cooler Master MasterBox MB511 ARGB", price: 6450000 },
+  { name: "Cooler Master HAF 500", price: 9850000 },
+  { name: "Cooler Master Cosmos C700P", price: 18900000 },
+  { name: "NZXT H510", price: 7250000 },
+  { name: "NZXT H7 Flow RGB", price: 11200000 },
+  { name: "NZXT H9 Elite", price: 14800000 },
+  { name: "Cougar MX330-G", price: 4950000 },
                 { name: "Zalman S2", price: 5000000 },
                 { name: "Deepcool MATREXX 55", price: 6000000 },
                 { name: "Cooler Master MasterBox MB511", price: 8000000 },
@@ -518,28 +802,58 @@
                 { name: "Thermaltake Tower 900", price: 40000000 }
             ],
             ssd: [
-                { name: "ADATA 256GB SU650", price: 2000000 },
-                { name: "Samsung 500GB 870 EVO", price: 3500000 },
-                { name: "WD Blue 1TB SN570", price: 5000000 },
-                { name: "Crucial P3 1TB NVMe", price: 6000000 },
-                { name: "Samsung 1TB 980 PRO NVMe", price: 8000000 },
-                { name: "Sabrent Rocket 4 Plus 2TB", price: 12000000 },
-                { name: "Corsair MP600 PRO XT 2TB", price: 15000000 },
-                { name: "Seagate FireCuda 530 4TB", price: 25000000 },
-                { name: "Samsung 4TB 990 PRO NVMe", price: 30000000 },
-                { name: "Sabrent Rocket Q4 8TB NVMe", price: 70000000 }
+            { name: "Samsung 970 EVO Plus 500GB NVMe", price: 2890000 },
+  { name: "Samsung 870 EVO 1TB SATA", price: 3450000 },
+  { name: "Samsung 980 PRO 1TB NVMe", price: 4980000 },
+  { name: "WD Blue SN570 500GB NVMe", price: 2150000 },
+  { name: "WD Black SN850X 1TB NVMe", price: 5250000 },
+  { name: "WD Green 240GB SATA", price: 1150000 },
+  { name: "Crucial BX500 240GB SATA", price: 1090000 },
+  { name: "Crucial MX500 500GB SATA", price: 2450000 },
+  { name: "Crucial P3 1TB NVMe", price: 3150000 },
+  { name: "ADATA SU650 240GB SATA", price: 1190000 },
+  { name: "ADATA XPG SX8200 Pro 512GB NVMe", price: 2780000 },
+  { name: "ADATA Legend 850 1TB NVMe", price: 3650000 },
+  { name: "Kingston A400 240GB SATA", price: 1050000 },
+  { name: "Kingston NV2 1TB NVMe", price: 2980000 },
+  { name: "Kingston KC3000 1TB NVMe", price: 4890000 },
+  { name: "Lexar NM620 512GB NVMe", price: 2350000 },
+  { name: "Lexar NM710 1TB NVMe", price: 3150000 },
+  { name: "PNY CS900 240GB SATA", price: 1120000 },
+  { name: "PNY XLR8 CS3140 1TB NVMe", price: 4950000 },
+  { name: "Gigabyte GP-GSM2NE3256GNTD 256GB NVMe", price: 1550000 },
+  { name: "MSI SPATIUM S270 240GB SATA", price: 1290000 },
+  { name: "MSI SPATIUM M390 500GB NVMe", price: 2650000 },
+  { name: "Silicon Power A55 512GB SATA", price: 1980000 },
+  { name: "Silicon Power S55 256GB SATA", price: 1390000 },
+  { name: "TeamGroup MP33 512GB NVMe", price: 2250000 }
             ],
             hdd: [
-                { name: "Seagate 1TB BarraCuda", price: 3000000 },
-                { name: "WD Blue 2TB", price: 4000000 },
-                { name: "Toshiba 4TB P300", price: 6000000 },
-                { name: "Seagate IronWolf 4TB NAS", price: 8000000 },
-                { name: "WD Red Plus 6TB NAS", price: 12000000 },
-                { name: "Toshiba 8TB X300", price: 15000000 },
-                { name: "Seagate Exos 10TB Enterprise", price: 20000000 },
-                { name: "WD Gold 14TB Enterprise", price: 25000000 },
-                { name: "Seagate IronWolf Pro 16TB NAS", price: 30000000 },
-                { name: "WD Ultrastar 20TB Enterprise", price: 40000000 }
+            { name: "WD Blue 1TB WD10EZEX", price: 3165000 },
+  { name: "WD Purple 1TB WD10PURZ", price: 3050000 },
+  { name: "WD Blue 500GB WD5000AZLX", price: 901500 },
+  { name: "WD Purple 2TB WD20PURZ", price: 5700000 },
+  { name: "WD Purple 4TB WD40PURZ", price: 7600000 },
+  { name: "WD Purple 6TB WD64PURZ", price: 14265000 },
+  { name: "WD Purple 10TB WD101PURP", price: 24435880 },
+  { name: "WD Purple 12TB WD121PURZ", price: 25600000 },
+  { name: "WD Black 6TB WD6003FZBX", price: 19000000 },
+  { name: "WD Blue 4TB WD40EZRZ", price: 12134000 },
+  { name: "WD Gold 8TB WD8004FRYZ", price: 24000000 },
+  { name: "Seagate BarraCuda 4TB ST4000DM004", price: 9498000 },
+  { name: "Seagate Exos X16 12TB ST12000NM001G", price: 21000000 },
+  { name: "Toshiba S300 4TB", price: 8200000 },
+  { name: "Toshiba S300 Surveillance 4TB", price: 8700000 },
+  { name: "Toshiba N300 4TB", price: 10100000 },
+  { name: "Toshiba MG07ACA 14TB", price: 22800000 },
+  { name: "Toshiba MG07A ENTERPRISE 14TB", price: 28300000 },
+  { name: "Toshiba MQ01ABF050 500GB", price: 1087000 },
+  { name: "Toshiba MQ04ABF100 1TB", price: 3920000 },
+  { name: "WD Blue 2TB WD20EZAZ", price: 4950000 },
+  { name: "WD Black 2TB WD2003FZEX", price: 6850000 },
+  { name: "Seagate SkyHawk 6TB ST6000VX0023", price: 14800000 },
+  { name: "WD Red Plus 4TB WD40EFZX", price: 9800000 },
+  { name: "WD Red Pro 6TB WD6003FFBX", price: 16800000 }
             ]
         };
 
